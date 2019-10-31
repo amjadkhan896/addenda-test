@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include partials/head %>
+</head>
+<body>
+<% include partials/menu %>
+<div class="container-fluid bg-3 text-center">
+    <h3><%= page %></h3>
+    <div class="row">
+
+        <div class="col-12">
+            <div class="alert alert-danger" id="msgDiv" style="display: none">
+
+            </div>
+            <div class="alert alert-success" id="succDiv" style="display: none">
+
+            </div>
+
+            <form class="form-horizontal" method="post" action="/users/login">
+
+
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="email">Email:</label>
+                    <div class="col-sm-9">
+                        <input type="email" class="form-control" id="email" placeholder="Enter email" name="email">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="pwd">Password:</label>
+                    <div class="col-sm-9">
+                        <input type="password" class="form-control" name="password"
+                               id="password" placeholder="Enter password">
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-9">
+                        <button type="submit" id="register_btn" class="btn btn-default">Login</button>
+                    </div>
+                </div>
+            </form>
+
+
+
+        </div>
+
+    </div>
+</div>
+</body>
+<% include partials/script %>
+</html>
+<script>
+    $(function(){
+        $("#register_btn").on('click', function(event){
+            //event.preventDefault();
+
+            var email      = $("#email").val();
+            var password   = $("#password").val();
+
+            $.ajax({
+                url: "/users/login",
+                method: "POST",
+                statusCode: {
+                    400: function(res) {
+
+                        var errors = '<ul>';
+                        $.each( res.responseJSON.errors, function( key, value ) {
+                            errors = errors +'<li>'+value.message+'</li>';
+                        });
+                        errors = errors+ '</ul>';
+                        $("#msgDiv").html(errors).show();
+                        setTimeout(function () {
+                            $("#msgDiv").hide();
+                        },5000)
+
+                        //console.log();
+                    }
+                },
+                data: { email: email, password: password }
+            }).done(function( data ) {
+                console.log(data);
+                if ( data ) {
+                    if(data.token != '') {
+
+                            window.location.href = '/users/me'
+
+
+                    }
+
+                }
+            });
+
+        });
+    });
+</script>
