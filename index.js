@@ -2,6 +2,10 @@ const express     = require('express')
 var bodyParser=require("body-parser");
 var cors = require('cors')
 const dotenv = require('dotenv');
+if (typeof localStorage === "undefined" || localStorage === null) {
+    var LocalStorage = require('node-localstorage').LocalStorage;
+    localStorage = new LocalStorage('./scratch');
+}
 
 require('./src/db/mongoose');
 

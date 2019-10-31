@@ -3,6 +3,11 @@ const router      =  new express.Router()
 const User        = require('../models/user')
 const {ObjectID}  = require('mongodb')
 
+if (typeof localStorage === "undefined" || localStorage === null) {
+    var LocalStorage = require('node-localstorage').LocalStorage;
+    localStorage = new LocalStorage('./scratch');
+}
+
 const authenticate  = require('../middleware/auth')
 
 router.get('/', (req, res) => {
@@ -24,8 +29,7 @@ router.post('/register', (req,res) => {
 })
 
 router.get('/users/me', authenticate,async (req,res)=> {
-    console.log('req')
-    res.send(req.user)
+    res.render('welcome', {page:'Welcome', menuId:'welcome',user:req.user});
 })
 
 
@@ -54,7 +58,7 @@ router.patch('/users/me',authenticate ,async (req,res) => {
 })
 
 router.delete('/users/me', authenticate, async (req,res) => {
-    req.setHeader('Authorization:', 'Bearer '+'ddd');
+
     if (!ObjectID.isValid(req.user._id)) {
         return res.status(404).send();
     }
@@ -73,6 +77,8 @@ router.post('/users/login', async (req, res) => {
         const user  = await User.checkValidCredentials(req.body.email, req.body.password)
         const token = await user.newAuthToken()
 
+
+        localStorage.setItem('token', token);
         res.send({ user, token})
     } catch (error) {
         res.status(400).send()
