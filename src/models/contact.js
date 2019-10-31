@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const PostSchema  = new mongoose.Schema({
+const ContactSchema  = new mongoose.Schema({
     title:{
         type:String,
         unique:true,
@@ -23,12 +23,8 @@ const PostSchema  = new mongoose.Schema({
     }
 });
 
-PostSchema.virtual('comments', {
-    ref: 'Comment',
-    localField: '_id',
-    foreignField: 'postId'
-})
 
-const Post = mongoose.model('Post', PostSchema);
 
-module.exports = Post
+const Contact = mongoose.model('Contact', ContactSchema);
+
+module.exports = Contact

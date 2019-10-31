@@ -2,7 +2,7 @@ const mongoose  = require('mongoose')
 const validator = require('validator')
 const bcrypt    = require('bcryptjs')
 const jwt       = require('jsonwebtoken')
-const Post      = require('./post')
+const Contact      = require('./contact')
 const UserSchema  = new mongoose.Schema({
     name:{
         type: String,
@@ -63,8 +63,8 @@ const UserSchema  = new mongoose.Schema({
     }
 });
 
-UserSchema.virtual('posts', {
-    ref: 'Post',
+UserSchema.virtual('contacts', {
+    ref: 'Contact',
     localField: '_id',
     foreignField: 'author'
 })

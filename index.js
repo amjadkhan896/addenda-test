@@ -1,16 +1,16 @@
 const express     = require('express')
 var bodyParser=require("body-parser");
+const cookieParser = require('cookie-parser');
 var cors = require('cors')
 const dotenv = require('dotenv');
-if (typeof localStorage === "undefined" || localStorage === null) {
-    var LocalStorage = require('node-localstorage').LocalStorage;
-    localStorage = new LocalStorage('./scratch');
-}
+
 
 require('./src/db/mongoose');
 
 
 const app   = express();
+app.use(cookieParser())
+
 dotenv.config();
 
 
@@ -18,7 +18,7 @@ app.use(cors());
 
 
 const userRoutes = require('./src/routes/user')
-const PostRoutes = require('./src/routes/post')
+const ContactRoutes = require('./src/routes/contact')
 const IndexRoutes = require('./src/routes/index')
 
 
@@ -30,12 +30,13 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
+
 const port  =  process.env.PORT || 8026
 
 app.use(express.json())
 
 app.use(userRoutes)
-app.use(PostRoutes)
+app.use(ContactRoutes)
 app.use(IndexRoutes)
 
 

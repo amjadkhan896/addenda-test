@@ -1,12 +1,11 @@
 const express       = require('express');
 const router        = new express.Router()
-const Post          = require('../models/post')
-const Comment       = require('../models/comment')
+const Contact          = require('../models/contact')
 const {ObjectID}    = require('mongodb')
 const  authenticate = require('../middleware/auth')
 
 router.post('/posts',authenticate, async (req,res) => {
-    const post =  new Post({
+    const post =  new Contact({
         ...req.body,
         author: req.user._id
     })
@@ -18,10 +17,11 @@ router.post('/posts',authenticate, async (req,res) => {
     }
 })
 
-router.get('/posts',async (req,res) => {
+router.get('/contacts',authenticate ,async (req,res) => {
     try {
-        const posts = await Post.find({})
-        res.send(posts)
+        const contacts = await Contact.find({})
+        res.render('contacts', {page:'Contacts', menuId:'contacts',contactsList:contacts,user:req.user });
+
     } catch (error) {
         res.status(500).send()
     }
@@ -33,7 +33,7 @@ router.get('/posts/:id',authenticate, async (req,res) => {
         return res.status(404).send();
     }
     try {
-        const post = await Post.findOne({ _id, author: req.user._id })
+        const post = await Contact.findOne({ _id, author: req.user._id })
         if(!post){
             return res.status(404).send()
         }
@@ -73,7 +73,7 @@ router.post('/posts/:id/comment',authenticate, async (req,res) => {
 //get all the comments related to the post
 router.get('/posts/:id/comment', async (req,res) => {
     try {
-        const post = await Post.findOne({_id: req.params.id})
+        const post = await Contact.findOne({_id: req.params.id})
         await post.populate('comments').execPopulate()
         res.send(post.comments)
     } catch (error) {
@@ -93,7 +93,7 @@ router.patch('/posts/:id',authenticate, async (req, res) => {
         res.status(404).send();
     }
     try {
-        const post = await Post.findOne({_id: req.params.id, author:req.user._id})
+        const post = await Contact.findOne({_id: req.params.id, author:req.user._id})
 
         if(!post){
             res.status(404).send();
@@ -114,7 +114,7 @@ router.delete('/posts/:id', authenticate,async (req,res) => {
         return res.status(404).send();
     }
     try {
-        const deletepost = await Post.findOneAndDelete({_id:_id, author: req.user._id})
+        const deletepost = await Contact.findOneAndDelete({_id:_id, author: req.user._id})
         if (!deletepost) {
             return res.status(404).send();
         }

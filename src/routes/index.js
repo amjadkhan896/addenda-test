@@ -10,6 +10,10 @@ router.get('/', (req, res) => {
 });
 
 router.get('/register', (req, res) => {
+   // const token =  req.cookies.token || req.header('Authorization').replace('Bearer', '').trim()
+   // if(token!=''){
+       // res.redirect('/users/me')
+    //}
     res.render('register', {page:'Register', menuId:'register' });
 
 });

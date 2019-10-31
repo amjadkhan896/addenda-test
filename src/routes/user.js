@@ -3,21 +3,16 @@ const router      =  new express.Router()
 const User        = require('../models/user')
 const {ObjectID}  = require('mongodb')
 
-if (typeof localStorage === "undefined" || localStorage === null) {
-    var LocalStorage = require('node-localstorage').LocalStorage;
-    localStorage = new LocalStorage('./scratch');
-}
 
 const authenticate  = require('../middleware/auth')
 
 router.get('/', (req, res) => {
-    res.render('index', {page:'Home', menuId:'home',name:'Amjad Khan' });
+    res.render('index', {page:'Home', menuId:'home' });
 
 });
 
 
 router.post('/register',async (req,res) => {
-
     const user = new User(req.body);
     try{
         const token = await user.newAuthToken()
@@ -76,21 +71,21 @@ router.post('/users/login', async (req, res) => {
         const user  = await User.checkValidCredentials(req.body.email, req.body.password)
         const token = await user.newAuthToken()
 
-
-        localStorage.setItem('token', token);
+        res.cookie('token', token, { httpOnly: true })
         res.send({ user, token})
     } catch (error) {
         res.status(400).send()
     }
 })
 
-router.post('/users/logout', authenticate, async (req, res) => {
+router.get('/users/logout', authenticate, async (req, res) => {
     try {
         req.user.tokens = req.user.tokens.filter((token) =>{
             return token.token !== req.token
         })
         await req.user.save()
-        res.send()
+        res.clearCookie("token");
+        res.redirect('/')
     } catch (error) {
         res.status(500).send()
     }
