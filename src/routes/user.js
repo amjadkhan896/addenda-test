@@ -16,13 +16,11 @@ router.get('/', (req, res) => {
 });
 
 
-router.post('/register', (req,res) => {
-    console.log(JSON.stringify(req.headers));
+router.post('/register',async (req,res) => {
 
     const user = new User(req.body);
     try{
         const token =  user.newAuthToken()
-
     }catch(e){
         res.status(400).send(e)
     }

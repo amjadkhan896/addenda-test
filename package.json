@@ -1,7 +1,7 @@
 {
-  "name": "addenda-test",
+  "name": "node_auth",
   "version": "1.0.0",
-  "description": "Addenda node js test",
+  "description": "node js auth",
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.js",
@@ -10,14 +10,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/amjadkhan896/addenda-test.git"
+    "url": "git+https://github.com/amjadkhan896/node_auth.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/amjadkhan896/addenda-test/issues"
+    "url": "https://github.com/amjadkhan896/node_auth/issues"
   },
-  "homepage": "https://github.com/amjadkhan896/addenda-test#readme",
+  "homepage": "https://github.com/amjadkhan896/node_auth#readme",
   "keywords": [],
   "dependencies": {
     "bcryptjs": "^2.4.3",
