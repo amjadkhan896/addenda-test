@@ -66,7 +66,7 @@ const UserSchema  = new mongoose.Schema({
 UserSchema.virtual('contacts', {
     ref: 'Contact',
     localField: '_id',
-    foreignField: 'author'
+    foreignField: 'user_id'
 })
 
 

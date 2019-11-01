@@ -69,6 +69,8 @@ router.post('/users/login', async (req, res) => {
     try {
 
         const user  = await User.checkValidCredentials(req.body.email, req.body.password)
+       // console.log(user);
+       // res.send(user);
         const token = await user.newAuthToken()
 
         res.cookie('token', token, { httpOnly: true })

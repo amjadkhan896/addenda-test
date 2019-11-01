@@ -1,18 +1,29 @@
 const mongoose = require('mongoose');
+const validator = require('validator')
+
 
 const ContactSchema  = new mongoose.Schema({
-    title:{
+    name:{
         type:String,
-        unique:true,
         required: true,
         trim: true
     },
-    description:{
+    phone:{
         type: String,
         required:true,
         trim: true
     },
-    author:{
+    email:{
+        type: String,
+        required:true,
+        trim: true
+    },
+    address:{
+        type: String,
+        required:true,
+        trim: true
+    },
+    user_id:{
         type: mongoose.Schema.Types.ObjectId,
         required:true,
         ref:'User'

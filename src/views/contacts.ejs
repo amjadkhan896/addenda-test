@@ -1,23 +1,49 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <% include partials/head %>
 </head>
 <body>
 <% include partials/login_menu %>
-<div class="container-fluid bg-3 text-center">
-    <h3><%= page+ ' '+user.name %></h3><br>
-    <div class="row">
 
-        <div class="col-sm-4">
+<main role="main" class="container text-center">
 
+    <div class="starter-template">
+        <h1>User <%= page %> List</h1></br>
+        <div class="row">
+            <div class="col-lg-10">&nbsp;</div>
+            <div class="col-lg-2"><a href="/contacts/add" class="btn btn-success float-right">Add Contact</a> </div>
         </div>
-        <div class="col-sm-4">
-        </div>
-        <div class="col-sm-4">
-        </div>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">email</th>
+                <th scope="col">Phone</th>
+                <th scope="col">Address</th>
+                <th scope="col">Action</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            <% contactsList.forEach(function(contact,key){ %>
+                <tr>
+                    <th scope="row"><%= key+1 %></th>
+                    <td><%= contact.name %></td>
+                    <td><%= contact.email %></td>
+                    <td><%= contact.phone %></td>
+                    <td><%= contact.address %></td>
+                    <td><a href="/contacts/edit/<%= contact._id %>" class="btn btn-info ">Edit</a>&nbsp;|&nbsp;<a href="/contacts/add" class="btn btn-danger">Delete</a></td>
+                </tr>
+            <% }); %>
+
+
+            </tbody>
+        </table>
     </div>
-</div>
+
+</main>
 </body>
 <% include partials/script %>
 </html>

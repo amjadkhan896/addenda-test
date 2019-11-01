@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <% include partials/head %>
+</head>
+<body>
+<% include partials/login_menu %>
+<main role="main" class="container text-center">
+
+    <div class="starter-template">
+        <h3><%= page %></h3>
+        <div class="row">
+
+            <div class="col-12">
+                <div class="alert alert-danger" id="msgDiv" style="display: none">
+
+                </div>
+                <div class="alert alert-success" id="succDiv" style="display: none">
+
+                </div>
+                <form class="form-horizontal" method="post" >
+                    <input type="hidden" name="id"  value="<%= contact._id %>">
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="name">Name:</label>
+                        <div class="col-sm-9">
+                            <input type="text" value="<%= contact.name %>" class="form-control" id="name" placeholder="Enter Name" name="name">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="email">Email:</label>
+                        <div class="col-sm-9">
+                            <input type="email" value="<%= contact.email %>" class="form-control" id="email" placeholder="Enter email" name="email">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="email">Phone:</label>
+                        <div class="col-sm-9">
+                            <input type="text" value="<%= contact.phone %>" class="form-control" id="phone" placeholder="Enter phone" name="phone">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="email">Address:</label>
+                        <div class="col-sm-9">
+                            <input type="text" value="<%= contact.address %>" class="form-control" id="address" placeholder="Enter Address" name="address">
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-9">
+                            <button type="button" id="register_btn" class="btn btn-default">Update Contact</button>
+                        </div>
+                    </div>
+                </form>
+
+
+
+            </div>
+
+        </div>
+    </div>
+</main>
+</body>
+<% include partials/script %>
+</html>
+<script>
+    $(function(){
+        $("#register_btn").on('click', function(event){
+            //event.preventDefault();
+            var name   = $("#name").val();
+            var email      = $("#email").val();
+            var phone   = $("#phone").val();
+            var address       = $("#address").val();
+
+            $.ajax({
+                url: "/contacts/add",
+                method: "POST",
+                statusCode: {
+                    400: function(res) {
+
+                        var errors = '<ul>';
+                        $.each( res.responseJSON.errors, function( key, value ) {
+                            errors = errors +'<li>'+value.message+'</li>';
+                        });
+                        errors = errors+ '</ul>';
+                        $("#msgDiv").html(errors).show();
+                        setTimeout(function () {
+                            $("#msgDiv").hide();
+                        },5000)
+
+                        //console.log();
+                    }
+                },
+                data: { name: name, phone: phone, email: email,address:address  }
+            }).done(function( data ) {
+               // console.log(data);
+                if ( data ) {
+                    if(data.token != '') {
+
+                        $("#succDiv").html("<p>Contact Added Successfully</p>").show();
+                        setTimeout(function () {
+                            $("#succDiv").hide();
+                            window.location.href = '/contacts'
+                        },5000)
+
+
+                    }
+
+                }
+            });
+
+        });
+    });
+</script>

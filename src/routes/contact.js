@@ -1,29 +1,53 @@
 const express       = require('express');
 const router        = new express.Router()
 const Contact          = require('../models/contact')
-const {ObjectID}    = require('mongodb')
 const  authenticate = require('../middleware/auth')
 
-router.post('/posts',authenticate, async (req,res) => {
-    const post =  new Contact({
-        ...req.body,
-        author: req.user._id
-    })
-    try {
-        await post.save()
-        res.status(201).send(post)
-    } catch (error) {
-        res.status(400).send(error)
-    }
-})
 
 router.get('/contacts',authenticate ,async (req,res) => {
     try {
-        const contacts = await Contact.find({})
+        //console.log(req.user)
+        const contacts = await Contact.find({"user_id":req.user._id})
         res.render('contacts', {page:'Contacts', menuId:'contacts',contactsList:contacts,user:req.user });
 
     } catch (error) {
         res.status(500).send()
+    }
+})
+
+router.get('/contacts/add',authenticate ,async (req,res) => {
+    try {
+        res.render('add_contact', {page:'Add Contact', menuId:'add_contact',user:req.user });
+
+    } catch (error) {
+        res.status(500).send()
+    }
+})
+
+router.get('/contacts/edit/:id',authenticate ,async (req,res) => {
+    try {
+        const contact = await Contact.findOne({"_id":req.params.id})
+
+        res.render('edit_contact', {page:'Edit Contact', menuId:'edit_contact',user:req.user,contact:contact });
+
+    } catch (error) {
+        res.status(500).send()
+    }
+})
+
+router.post('/contacts/add',authenticate ,async (req,res) => {
+    const contact =  new Contact({
+        name:req.body.name,
+        email:req.body.email,
+        phone:req.body.phone,
+        address:req.body.address,
+        user_id: req.user._id
+    })
+    try {
+        await contact.save()
+        res.status(201).send(contact)
+    } catch (error) {
+        res.status(400).send(contact)
     }
 })
 
