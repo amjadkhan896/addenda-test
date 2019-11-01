@@ -2,6 +2,8 @@ const express       = require('express');
 const router        = new express.Router()
 const Contact          = require('../models/contact')
 const  authenticate = require('../middleware/auth')
+const {ObjectID}  = require('mongodb')
+
 
 
 router.get('/contacts',authenticate ,async (req,res) => {
@@ -36,6 +38,8 @@ router.get('/contacts/edit/:id',authenticate ,async (req,res) => {
 })
 
 router.post('/contacts/add',authenticate ,async (req,res) => {
+
+
     const contact =  new Contact({
         name:req.body.name,
         email:req.body.email,
@@ -51,96 +55,35 @@ router.post('/contacts/add',authenticate ,async (req,res) => {
     }
 })
 
-router.get('/posts/:id',authenticate, async (req,res) => {
-    const _id =  req.params.id
-    if (!ObjectID.isValid(_id)) {
-        return res.status(404).send();
-    }
-    try {
-        const post = await Contact.findOne({ _id, author: req.user._id })
-        if(!post){
-            return res.status(404).send()
-        }
-        res.send(post);
-    } catch (error) {
-        res.status(500).send()
-    }
-})
+router.post('/contacts/update',authenticate ,async (req,res) => {
 
-router.post('/posts/:id/comment',authenticate, async (req,res) => {
-    const _id = req.params.id
-    const userid = req.user._id
+    let contact = {};
+    contact.name = req.body.name;
+    contact.email = req.body.email;
+    contact.phone = req.body.phone;
+    contact.address = req.body.address;
 
-    if (!ObjectID.isValid(_id)) {
-        return res.status(404).send();
-    }
-
-    if (!ObjectID.isValid(userid)) {
-        return res.status(404).send();
-    }
-
-    const comment = new Comment({
-        ...req.body,
-        author: userid,
-        postId: _id
-    })
+    let query = {_id:req.body.r_id}
 
     try {
-        await comment.save()
-        res.status(201).send(comment)
+        Contact.update(query, contact, function(err){
+
+                console.log(err);
+        });
+
+        res.status(201).send(contact)
     } catch (error) {
         res.status(400).send(error)
     }
-
 })
 
-//get all the comments related to the post
-router.get('/posts/:id/comment', async (req,res) => {
-    try {
-        const post = await Contact.findOne({_id: req.params.id})
-        await post.populate('comments').execPopulate()
-        res.send(post.comments)
-    } catch (error) {
-        res.status(500).send()
-    }
-})
-
-router.patch('/posts/:id',authenticate, async (req, res) => {
+router.delete('/contact/delete/:id', authenticate,async (req,res) => {
     const _id = req.params.id
-    const updates = Object.keys(req.body);
-    const allowedUpdates = ["description", "title"]
-    const isValidOperation  = updates.every((update) => allowedUpdates.includes(update))
-    if(!isValidOperation){
-        res.status(400).send({error:'Invalid updates'})
-    }
-    if (!ObjectID.isValid(_id)) {
-        res.status(404).send();
-    }
+
     try {
-        const post = await Contact.findOne({_id: req.params.id, author:req.user._id})
-
-        if(!post){
-            res.status(404).send();
-        }
-
-        updates.forEach((update) => post[update] = req.body[update])
-        await post.save()
-
-        res.send(post);
-    } catch (error) {
-        res.status(400).send();
-    }
-})
-
-router.delete('/posts/:id', authenticate,async (req,res) => {
-    const _id = req.params.id
-    if (!ObjectID.isValid(_id)) {
-        return res.status(404).send();
-    }
-    try {
-        const deletepost = await Contact.findOneAndDelete({_id:_id, author: req.user._id})
+        const deletepost = await Contact.findOneAndDelete({_id:_id, user_id: req.user._id})
         if (!deletepost) {
-            return res.status(404).send();
+             res.status(404).send();
         }
         res.send(deletepost)
     } catch (error) {

@@ -19,7 +19,8 @@
 
                 </div>
                 <form class="form-horizontal" method="post" >
-                    <input type="hidden" name="id"  value="<%= contact._id %>">
+                    <input type="hidden" value="<%= contact._id %>" class="form-control" id="r_id"  name="r_id">
+
                     <div class="form-group">
                         <label class="control-label col-sm-2" for="name">Name:</label>
                         <div class="col-sm-9">
@@ -71,12 +72,13 @@
         $("#register_btn").on('click', function(event){
             //event.preventDefault();
             var name   = $("#name").val();
+            var r_id   = $("#r_id").val();
             var email      = $("#email").val();
             var phone   = $("#phone").val();
             var address       = $("#address").val();
 
             $.ajax({
-                url: "/contacts/add",
+                url: "/contacts/update",
                 method: "POST",
                 statusCode: {
                     400: function(res) {
@@ -94,13 +96,13 @@
                         //console.log();
                     }
                 },
-                data: { name: name, phone: phone, email: email,address:address  }
+                data: { r_id: r_id, name: name, phone: phone, email: email,address:address  }
             }).done(function( data ) {
                // console.log(data);
                 if ( data ) {
                     if(data.token != '') {
 
-                        $("#succDiv").html("<p>Contact Added Successfully</p>").show();
+                        $("#succDiv").html("<p>Contact Updated Successfully</p>").show();
                         setTimeout(function () {
                             $("#succDiv").hide();
                             window.location.href = '/contacts'

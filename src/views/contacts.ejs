@@ -34,7 +34,7 @@
                     <td><%= contact.email %></td>
                     <td><%= contact.phone %></td>
                     <td><%= contact.address %></td>
-                    <td><a href="/contacts/edit/<%= contact._id %>" class="btn btn-info ">Edit</a>&nbsp;|&nbsp;<a href="/contacts/add" class="btn btn-danger">Delete</a></td>
+                    <td><a href="/contacts/edit/<%= contact._id %>" class="btn btn-info ">Edit</a>&nbsp;|&nbsp;<a href="javascript:void(0)" data-id="<%= contact._id %>" id="delete_contact" class="btn btn-danger">Delete</a></td>
                 </tr>
             <% }); %>
 
@@ -47,3 +47,20 @@
 </body>
 <% include partials/script %>
 </html>
+<script>
+    $('#delete_contact').on('click', function(e){
+        $target = $(e.target);
+        const id = $target.attr('data-id');
+        $.ajax({
+            type:'DELETE',
+            url: '/contact/delete/'+id,
+            success: function(response){
+               // alert('Deleting Article');
+                window.location.href='/contacts/';
+            },
+            error: function(err){
+                console.log(err);
+            }
+        });
+    });
+</script>
