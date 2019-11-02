@@ -81,17 +81,17 @@
                 url: "/contacts/update",
                 method: "POST",
                 statusCode: {
-                    400: function(res) {
+                    422: function(res) {
 
                         var errors = '<ul>';
                         $.each( res.responseJSON.errors, function( key, value ) {
-                            errors = errors +'<li>'+value.message+'</li>';
+                            errors = errors +'<li>'+value.msg+'</li>';
                         });
                         errors = errors+ '</ul>';
                         $("#msgDiv").html(errors).show();
                         setTimeout(function () {
                             $("#msgDiv").hide();
-                        },5000)
+                        },3000)
 
                         //console.log();
                     }
@@ -106,7 +106,7 @@
                         setTimeout(function () {
                             $("#succDiv").hide();
                             window.location.href = '/contacts'
-                        },5000)
+                        },3000)
 
 
                     }

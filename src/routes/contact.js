@@ -3,6 +3,8 @@ const router        = new express.Router()
 const Contact          = require('../models/contact')
 const  authenticate = require('../middleware/auth')
 const {ObjectID}  = require('mongodb')
+const {check, validationResult} = require('express-validator');
+
 
 
 
@@ -13,7 +15,7 @@ router.get('/contacts',authenticate ,async (req,res) => {
         res.render('contacts', {page:'Contacts', menuId:'contacts',contactsList:contacts,user:req.user });
 
     } catch (error) {
-        res.status(500).send()
+        res.status(404).send(error.message)
     }
 })
 
@@ -22,7 +24,7 @@ router.get('/contacts/add',authenticate ,async (req,res) => {
         res.render('add_contact', {page:'Add Contact', menuId:'add_contact',user:req.user });
 
     } catch (error) {
-        res.status(500).send()
+        res.status(404).send(error.message)
     }
 })
 
@@ -33,12 +35,20 @@ router.get('/contacts/edit/:id',authenticate ,async (req,res) => {
         res.render('edit_contact', {page:'Edit Contact', menuId:'edit_contact',user:req.user,contact:contact });
 
     } catch (error) {
-        res.status(500).send()
+        res.status(404).send(error.message)
     }
 })
 
 router.post('/contacts/add',authenticate ,async (req,res) => {
 
+    await check('name').not().isEmpty().withMessage('Please enter name').run(req);
+    await check('email').not().isEmpty().withMessage('Please enter email').run(req);
+    await check('phone').not().isEmpty().withMessage('Please enter phone').run(req);
+    await check('address').not().isEmpty().withMessage('Please enter address').run(req);
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({errors: errors.array()});
+    }
 
     const contact =  new Contact({
         name:req.body.name,
@@ -47,15 +57,21 @@ router.post('/contacts/add',authenticate ,async (req,res) => {
         address:req.body.address,
         user_id: req.user._id
     })
-    try {
+
         await contact.save()
-        res.status(201).send(contact)
-    } catch (error) {
-        res.status(400).send(contact)
-    }
+        res.status(200).send(contact)
+
 })
 
 router.post('/contacts/update',authenticate ,async (req,res) => {
+    await check('name').not().isEmpty().withMessage('Please enter name').run(req);
+    await check('email').not().isEmpty().withMessage('Please enter email').run(req);
+    await check('phone').not().isEmpty().withMessage('Please enter phone').run(req);
+    await check('address').not().isEmpty().withMessage('Please enter address').run(req);
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(422).json({errors: errors.array()});
+    }
 
     let contact = {};
     contact.name = req.body.name;
@@ -65,16 +81,13 @@ router.post('/contacts/update',authenticate ,async (req,res) => {
 
     let query = {_id:req.body.r_id}
 
-    try {
         Contact.update(query, contact, function(err){
 
                 console.log(err);
         });
 
-        res.status(201).send(contact)
-    } catch (error) {
-        res.status(400).send(error)
-    }
+        res.status(200).send(contact)
+
 })
 
 router.delete('/contact/delete/:id', authenticate,async (req,res) => {
@@ -82,12 +95,9 @@ router.delete('/contact/delete/:id', authenticate,async (req,res) => {
 
     try {
         const deletepost = await Contact.findOneAndDelete({_id:_id, user_id: req.user._id})
-        if (!deletepost) {
-             res.status(404).send();
-        }
         res.send(deletepost)
     } catch (error) {
-        res.status(500).send()
+        res.status(422).send(error.message)
     }
 })
 

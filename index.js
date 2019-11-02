@@ -5,6 +5,7 @@ var cors = require('cors')
 const dotenv = require('dotenv');
 
 
+
 require('./src/db/mongoose');
 
 
@@ -30,16 +31,13 @@ app.use(bodyParser.urlencoded({
     extended: true
 }));
 
-
-const port  =  process.env.PORT || 8026
-
 app.use(express.json())
-
 app.use(userRoutes)
 app.use(ContactRoutes)
 app.use(IndexRoutes)
 
 
+const port  =  process.env.PORT || 8026
 
 
 app.listen(port,() =>{
