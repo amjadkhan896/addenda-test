@@ -2,14 +2,15 @@ const express     = require('express');
 const router      =  new express.Router()
 const {ObjectID}  = require('mongodb')
 
-const authenticate  = require('../middleware/auth')
+const notLogedIn = require('../middleware/notLogedIn')
+
 
 router.get('/', (req, res) => {
     res.render('index', {page:'Home', menuId:'home',name:'Amjad Khan' });
 
 });
 
-router.get('/register', (req, res) => {
+router.get('/register',notLogedIn, (req, res) => {
    // const token =  req.cookies.token || req.header('Authorization').replace('Bearer', '').trim()
    // if(token!=''){
        // res.redirect('/users/me')
@@ -18,7 +19,7 @@ router.get('/register', (req, res) => {
 
 });
 
-router.get('/login', (req, res) => {
+router.get('/login', notLogedIn, (req, res) => {
     res.render('login', {page:'Login', menuId:'login' });
 
 });

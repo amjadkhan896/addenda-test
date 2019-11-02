@@ -2,19 +2,33 @@ const express = require('express');
 const router = new express.Router()
 const User = require('../models/user')
 const {ObjectID} = require('mongodb')
-const validator = require('validator')
 const {check, validationResult} = require('express-validator');
 
 
 const authenticate = require('../middleware/auth')
 
-router.get('/', (req, res) => {
-    res.render('index', {page: 'Home', menuId: 'home'});
 
-});
 
 
 router.post('/register', async (req, res) => {
+
+    await check('name').not().isEmpty().withMessage('Please enter name').run(req);
+    await check('email').not().isEmpty().withMessage('Please enter email').run(req);
+    await check('password').not().isEmpty().isLength({min:6}).withMessage('Please enter password. min Length is 6').run(req);
+    await check('phone').not().isEmpty().withMessage('Please enter phone').run(req);
+    const errors = validationResult(req);
+
+
+    if (!errors.isEmpty()) {
+        return res.status(422).json({errors: errors.array()});
+    }
+
+    let chkUserCount = await User.countDocuments({email:req.body.email});
+   // console.log(chkUser);
+    if (parseInt(chkUserCount) > 0) {
+        return  res.status(422).send({errors:[{'msg':"Email Already Exists, Please try another one"}]})
+    }
+
     const user = new User(req.body);
     try {
         const token = await user.newAuthToken()

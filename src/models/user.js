@@ -1,55 +1,34 @@
 const mongoose  = require('mongoose')
-const validator = require('validator')
 const bcrypt    = require('bcryptjs')
 const jwt       = require('jsonwebtoken')
 const Contact      = require('./contact')
 const UserSchema  = new mongoose.Schema({
     name:{
         type: String,
-        required: true,
+       // required: true,
         trim: true,
-        validate(value){
-            if(value < 0){
-                throw new Error('Name field is required')
-            }
-        }
+
     },
     phone:{
         type: String,
-        required: true,
+       // required: true,
         trim: true,
-        validate(value){
-            if(value < 0){
-                throw new Error('Phone field is required')
-            }
-        }
+
     },
     email:{
         type: String,
-        required: true,
-        unique:true,
+      //  required: true,
+       // unique:true,
         trim: true,
-        validate(value){
-            if(!validator.isEmail(value)){
-                throw new Error('Email is invalid!')
-            }
-        }
+
 
     },
     password:{
         type:String,
-        required:true,
+       // required:true,
         trim:true,
-        minlength: 6,
-        validate(value){
-            if(validator.isEmpty(value)){
-                throw new Error('Please enter your password!')
-            }else if(validator.equals(value.toLowerCase(),"password")){
-                throw new Error('Password is invalid!')
-            }else if(validator.contains(value.toLowerCase(), "password")){
-                throw new Error('Password should not contain password!')
-            }
-        }
+      //  minlength: 6,
+
     },
     tokens:[{
         token:{
@@ -62,12 +41,6 @@ const UserSchema  = new mongoose.Schema({
         default: Date.now
     }
 });
-
-UserSchema.virtual('contacts', {
-    ref: 'Contact',
-    localField: '_id',
-    foreignField: 'user_id'
-})
 
 
 

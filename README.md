@@ -11,11 +11,11 @@ Node Js, MongoDB, ejs views template, Express js
 npm install 
 ```
 
-#Then 
 
 #Run
 ```
 npm run dev
+
 ```
 
 
