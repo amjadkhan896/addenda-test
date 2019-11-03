@@ -5,29 +5,29 @@ const Contact      = require('./contact')
 const UserSchema  = new mongoose.Schema({
     name:{
         type: String,
-       // required: true,
+        required: true,
         trim: true,
 
     },
     phone:{
         type: String,
-       // required: true,
+        required: true,
         trim: true,
 
     },
     email:{
         type: String,
-      //  required: true,
-       // unique:true,
+        required: true,
+        unique:true,
         trim: true,
 
 
     },
     password:{
         type:String,
-       // required:true,
+        required:true,
         trim:true,
-      //  minlength: 6,
+        minlength: 6,
 
     },
     tokens:[{
